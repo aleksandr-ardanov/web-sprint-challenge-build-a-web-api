@@ -1,27 +1,26 @@
 // Write your "actions" router here!
 const express = require('express');
-const Actions = require('./actions-model');
-const {validateActionId, validateAction} = require('../middlewares/actions-middleware');
+const Actions = require('./actions-model'); // access to actions 
+const {validateActionId, validateAction} = require('../middlewares/actions-middleware'); // import middlewares
 
 const router = express.Router();
 
-
-router.get('/',(req, res, next) => {
+router.get('/',(req, res, next) => {       //gets all actions
     Actions.get()
         .then(allActions => {
             res.status(200).json(allActions)
         })
         .catch(err => {
-            next(err)
+            next(err)               //if getting an error it pushes it to the middleware which catches errors
         })
 })
 
-router.get('/:id',validateActionId, (req, res) => {
+router.get('/:id',validateActionId, (req, res) => {         //gets a specific action by id if it exists
     res.status(200).json(req.action)
 })
 
-router.post('/',validateAction, (req, res, next) => {
-    Actions.insert(req.body)
+router.post('/',validateAction, (req, res, next) => {   //adds an action
+    Actions.insert(req.body)        
         .then(newAction => {
             res.status(201).json(newAction)
         })
@@ -30,7 +29,7 @@ router.post('/',validateAction, (req, res, next) => {
         })
 })
 
-router.put('/:id',validateActionId, validateAction, (req, res, next) => {
+router.put('/:id',validateActionId, validateAction, (req, res, next) => {       //updates an action if it exists
     const {id} = req.params;
     Actions.update(id, req.body)
         .then(updated => {
@@ -41,7 +40,7 @@ router.put('/:id',validateActionId, validateAction, (req, res, next) => {
         })
 })
 
-router.delete('/:id',validateActionId, (req, res, next) => {
+router.delete('/:id',validateActionId, (req, res, next) => {              //deletes an action if it exists
     const {id} = req.params;
     Actions.remove(id)
         .then(() => {
@@ -52,12 +51,4 @@ router.delete('/:id',validateActionId, (req, res, next) => {
         })
 })
 
-// eslint-disable-next-line no-unused-vars
-router.use((err,req,res,next) => {
-    res.status(500).json({
-        message:"there's a problem!",
-        error: err.message
-    })
-})
-
-module.exports = router;
+module.exports = router;        // export
